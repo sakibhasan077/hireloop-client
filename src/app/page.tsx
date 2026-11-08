@@ -1,7 +1,7 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div>Main Page</div>
+    <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
+      home page
+    </div>
   );
 }
