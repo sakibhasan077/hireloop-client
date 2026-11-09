@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Manrope } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Manrope,
+  Plus_Jakarta_Sans,
+  Space_Mono,
+} from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import "./globals.css";
 
@@ -18,6 +24,17 @@ const manrope = Manrope({
   subsets: ["latin"],
 });
 
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono-family",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-family",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "HireLoop — Find Your Dream Job Today",
   description:
@@ -28,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} dark h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${spaceMono.variable} ${plusJakartaSans.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Navbar />

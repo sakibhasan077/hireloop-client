@@ -18,12 +18,12 @@ const isActive = (pathname: string, href: string) =>
   pathname === href || pathname.startsWith(`${href}/`);
 
 const Navbar = () => {
-  const pathname = usePathname()
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-[rgba(10,10,10,0.79)] px-3 pt-3 sm:px-5 sm:pt-4">
-      <div className="relative mx-auto flex h-18 max-w-7xl items-center justify-between gap-4 rounded-2xl border border-white/10 bg-[#141414] px-4 shadow-lg sm:h-16 sm:px-5">
+    <header className="fixed top-0 z-50 w-full px-3 pt-1.5 sm:px-5 sm:pt-2">
+      <div className="relative mx-auto flex h-9 max-w-7xl items-center justify-between gap-2 rounded-xl border border-white/10 bg-[#141414] px-3 shadow-lg sm:h-12 sm:px-4">
         {/* Logo */}
         <Link href="/">
           <Image
@@ -32,18 +32,18 @@ const Navbar = () => {
             width={154}
             height={44}
             loading="eager"
-            className="h-8 w-auto"
+            className="h-5 w-auto sm:h-6"
           />
         </Link>
 
         {/* Desktop links + buttons */}
-        <div className="hidden items-center gap-6 font-manrope md:flex">
-          <nav className="flex items-center gap-6 lg:gap-10 border-r-[3px] py-1.5 pr-6 border-[rgba(168,168,168,0.41)]">
+        <div className="hidden items-center gap-3 font-manrope md:flex lg:gap-5">
+          <nav className="flex items-center gap-3 border-r border-[rgba(168,168,168,0.41)] py-1 pr-3 lg:gap-6 lg:pr-5">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`border-b-2 pb-1.5 text-sm transition-colors hover:text-white ${
+                className={`border-b pb-1 text-[10px] transition-colors hover:text-white lg:text-xs ${
                   isActive(pathname, link.href)
                     ? "border-[#5C53FE] text-white"
                     : "border-transparent text-neutral-400"
@@ -54,16 +54,22 @@ const Navbar = () => {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3 lg:gap-6">
+          <div className="flex items-center gap-2 lg:gap-4">
             <Link
               href="/sign-in"
-              className="text-base px-6 py-4 font-medium text-[#5C53FE] transition-colors hover:opacity-80"
+              className="px-2 py-1 text-xs font-medium text-[#5C53FE] transition-colors hover:opacity-80 lg:px-3"
             >
               Sign In
             </Link>
-            <Button className="inline-block bg-[#5C53FE] min-h-12.5 text-base px-6 py-3 text-white hover:bg-[#5C53FE]/90">
+
+            <Link
+               href="/sign-up"
+              className="inline-block min-h-7 bg-[#5C53FE] px-5.5 py-3 text-[10px] text-white hover:bg-[#5C53FE]/90 lg:px-3 lg:text-xs rounded-md"
+            >
               Get Started
-            </Button>
+            </Link>
+
+
           </div>
         </div>
 
@@ -123,12 +129,13 @@ const Navbar = () => {
                     Sign In
                   </Link>
 
-                  <Button
-                    className="block h-[50px] w-full bg-[#5C53FE] text-base text-white hover:bg-[#5C53FE]/90"
+                  <Link
+                    href="/sign-up"
+                    className="block px-5.5 py-3 w-full bg-[#5C53FE] text-base text-white hover:bg-[#5C53FE]/90"
                     onClick={() => setMenuOpen(false)}
                   >
                     Get Started
-                  </Button>
+                  </Link>
                 </div>
               </div>
             </>
