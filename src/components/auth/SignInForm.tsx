@@ -6,8 +6,11 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { signIn } from "@/lib/auth-client";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-type FieldName = "email" | "password";// type script ke bole dicchi ei form e ki ki input field ase
+type FieldName = "email" | "password"; // type script ke bole dicchi ei form e ki ki input field ase
 type FormErrors = Partial<Record<FieldName, string>>;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,10 +27,13 @@ const validateEmail = (value: string) => {
 const validatePassword = (value: string) => {
   if (!value) return "Password is required.";
   if (value.length < 8) return "Password must be at least 8 characters.";
-  if(!/[A-Z]/.test(value)) return "Password must contain at least one uppercase letter.";
-  if(!/[a-z]/.test(value)) return "Password must contain at least one lowercase letter.";
-  if(!/[0-9]/.test(value)) return "Password must contain at least one number.";
-  if(!/[!@#$%^&*]/.test(value)) return "Password must contain at least one special character.";
+  if (!/[A-Z]/.test(value))
+    return "Password must contain at least one uppercase letter.";
+  if (!/[a-z]/.test(value))
+    return "Password must contain at least one lowercase letter.";
+  if (!/[0-9]/.test(value)) return "Password must contain at least one number.";
+  if (!/[!@#$%^&*]/.test(value))
+    return "Password must contain at least one special character.";
 
   return undefined;
 };
@@ -36,6 +42,7 @@ const inputClassName =
   "h-11 rounded-lg border-white/10 bg-white/5 text-sm text-white placeholder:text-neutral-500 focus-visible:border-[#5C53FE] focus-visible:ring-[#5C53FE]/30 dark:bg-white/5";
 
 const SignInForm = () => {
+  const router = useRouter();
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -50,8 +57,7 @@ const SignInForm = () => {
 
     setErrors((previous) => ({
       ...previous,
-      [name]:
-        name === "email" ? validateEmail(value) : validatePassword(value),
+      [name]: name === "email" ? validateEmail(value) : validatePassword(value),
     }));
   };
 
@@ -61,12 +67,11 @@ const SignInForm = () => {
 
     setErrors((previous) => ({
       ...previous,
-      [name]:
-        name === "email" ? validateEmail(value) : validatePassword(value),
+      [name]: name === "email" ? validateEmail(value) : validatePassword(value),
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const nextErrors: FormErrors = {
@@ -79,6 +84,33 @@ const SignInForm = () => {
     if (nextErrors.email || nextErrors.password) return;
 
     // TODO: integrate authentication here.
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries()) as {
+      email: string;
+      password: string;
+    };
+    const { data: resData, error } = await signIn.email(
+      {
+        ...data,
+      },
+      {
+        onRequest: () => {
+          toast.loading("Signing in...", { id: "sign-in" });
+        },
+        onSuccess: () => {
+          toast.success("Signed in successfully!", { id: "sign-in" });
+          router.push("/");
+        },
+        onError: (err) => {
+          toast.error(
+            err.error.message ||
+              "An error occurred while signing in.",
+            { id: "sign-in" },
+          );
+        },
+      },
+    );
   };
 
   return (
