@@ -6,7 +6,9 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { signOut, useSession } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 const links = [
   { name: "Browse Jobs", href: "/jobs" },
@@ -18,9 +20,27 @@ const isActive = (pathname: string, href: string) =>
   pathname === href || pathname.startsWith(`${href}/`);
 
 const Navbar = () => {
+  const router = useRouter()
+  const { data: session } = useSession();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const user = session?.user;
+  const handleSignout = async () => {
+    await signOut({
+      fetchOptions: {
+        onRequest:() =>{
+          toast.loading("Signing out...", {id: "signOut"});
+        },
+        onSuccess: () => {
+          router.push("/sign-in"); // redirect to login page
+          toast.success("Signed out successfully",{id: "signOut"});
+        },
+        onError: (err) =>{
+          toast.error(`Error signing out: ${err.error.message}`, {id: "signOut"});
+        }
+      },
+    });
+  };
   return (
     <header className="fixed top-0 z-50 w-full px-3 pt-1.5 sm:px-5 sm:pt-2">
       <div className="relative mx-auto flex h-9 max-w-7xl items-center justify-between gap-2 rounded-xl border border-white/10 bg-[#141414] px-3 shadow-lg sm:h-12 sm:px-4">
@@ -53,24 +73,31 @@ const Navbar = () => {
               </Link>
             ))}
           </nav>
-
-          <div className="flex items-center gap-2 lg:gap-4">
-            <Link
-              href="/sign-in"
-              className="px-2 py-1 text-xs font-medium text-[#5C53FE] transition-colors hover:opacity-80 lg:px-3"
+          {/* log-in and sign up buttons */}
+          {user ? (
+            <button
+              onClick={handleSignout}
+              className="inline-block min-h-7 bg-red-600 px-5.5 py-3 text-[10px] text-white hover:bg-red-600/90 lg:px-3 lg:text-xs rounded-md"
             >
-              Sign In
-            </Link>
+              Sign out
+            </button>
+          ) : (
+            <div className="flex items-center gap-2 lg:gap-4">
+              <Link
+                href="/sign-in"
+                className="px-2 py-1 text-xs font-medium text-[#5C53FE] transition-colors hover:opacity-80 lg:px-3"
+              >
+                Sign In
+              </Link>
 
-            <Link
-               href="/sign-up"
-              className="inline-block min-h-7 bg-[#5C53FE] px-5.5 py-3 text-[10px] text-white hover:bg-[#5C53FE]/90 lg:px-3 lg:text-xs rounded-md"
-            >
-              Get Started
-            </Link>
-
-
-          </div>
+              <Link
+                href="/sign-up"
+                className="inline-block min-h-7 bg-[#5C53FE] px-5.5 py-3 text-[10px] text-white hover:bg-[#5C53FE]/90 lg:px-3 lg:text-xs rounded-md"
+              >
+                Get Started
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile menu — click the icon to open */}
@@ -119,24 +146,33 @@ const Navbar = () => {
                     </Link>
                   ))}
                 </nav>
-
-                <div className="mt-3 flex flex-col gap-4 border-t border-white/10 pt-3">
-                  <Link
-                    href="/sign-in"
-                    onClick={() => setMenuOpen(false)}
-                    className="block rounded-lg border border-white/15 px-6 py-4 text-center text-base font-medium text-[#5C53FE] transition-colors hover:bg-white/5"
+                {/* Login and sign up buttons */}
+                {user ? (
+                  <button
+                    onClick={handleSignout}
+                    className="inline-block min-h-7 bg-red-600 px-5.5 py-3 text-[10px] text-white hover:bg-red-600/90 lg:px-3 lg:text-xs rounded-md"
                   >
-                    Sign In
-                  </Link>
+                    Sign out
+                  </button>
+                ) : (
+                  <div className="mt-3 flex flex-col gap-4 border-t border-white/10 pt-3">
+                    <Link
+                      href="/sign-in"
+                      onClick={() => setMenuOpen(false)}
+                      className="block rounded-lg border border-white/15 px-6 py-4 text-center text-base font-medium text-[#5C53FE] transition-colors hover:bg-white/5"
+                    >
+                      Sign In
+                    </Link>
 
-                  <Link
-                    href="/sign-up"
-                    className="block px-5.5 py-3 w-full bg-[#5C53FE] text-base text-white hover:bg-[#5C53FE]/90"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Get Started
-                  </Link>
-                </div>
+                    <Link
+                      href="/sign-up"
+                      className="block px-5.5 py-3 w-full bg-[#5C53FE] text-base text-white hover:bg-[#5C53FE]/90"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Get Started
+                    </Link>
+                  </div>
+                )}
               </div>
             </>
           )}
