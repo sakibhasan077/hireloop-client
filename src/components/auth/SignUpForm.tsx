@@ -5,6 +5,9 @@ import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { signUp } from "@/lib/auth-client";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type FieldName = "name" | "email" | "password" | "confirmPassword";
 type FormValues = Record<FieldName, string>;
@@ -75,6 +78,7 @@ const validateField = (name: FieldName, values: FormValues) => {
 };
 
 const SignUpForm = () => {
+  const router = useRouter()
   const [values, setValues] = useState<FormValues>({
     name: "",
     email: "",
@@ -122,7 +126,7 @@ const SignUpForm = () => {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const nextErrors: FormErrors = {
@@ -140,6 +144,24 @@ const SignUpForm = () => {
     if (Object.values(nextErrors).some(Boolean)) return;
 
     // TODO: integrate authentication here.
+    const form = event.currentTarget
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries()) as {name: string; email: string; password: string;}
+    const {data:resData, error} = await signUp.email({
+      ...data
+    },{
+      onRequest:()=>{
+        toast.loading("Creating your account...", {id: "sign-up"})
+      },
+      onSuccess:()=>{
+        toast.success("Account created successfully!", {id: "sign-up"})
+        router.push("/")
+      },
+      onError:(err)=>{
+        toast.error(err.error.message || "An error occurred while creating your account.", {id: "sign-up"})
+      }
+
+    })
   };
 
   return (
