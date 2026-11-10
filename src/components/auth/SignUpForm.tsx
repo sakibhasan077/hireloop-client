@@ -9,9 +9,15 @@ import { signUp } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-type FieldName = "name" | "email" | "password" | "confirmPassword";
+type FieldName = "name" | "email" | "password" | "confirmPassword" | "role";
 type FormValues = Record<FieldName, string>;
 type FormErrors = Partial<Record<FieldName, string>>;
+
+const roles = [
+  { value: "seeker", label: "Job Seeker" },
+  { value: "recruiter", label: "Recruiter" },
+  { value: "admin", label: "Admin" },
+] as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -55,6 +61,13 @@ const validateConfirmPassword = (password: string, confirmPassword: string) => {
   return undefined;
 };
 
+const validateRole = (value: string) => {
+  if (!roles.some((role) => role.value === value))
+    return "Select a valid account type.";
+
+  return undefined;
+};
+
 const inputClassName =
   "h-11 rounded-lg border-white/10 bg-white/5 text-sm text-white placeholder:text-neutral-500 focus-visible:border-[#5C53FE] focus-visible:ring-[#5C53FE]/30 dark:bg-white/5";
 
@@ -62,7 +75,8 @@ const isFieldName = (name: string): name is FieldName =>
   name === "name" ||
   name === "email" ||
   name === "password" ||
-  name === "confirmPassword";
+  name === "confirmPassword" ||
+  name === "role";
 
 const validateField = (name: FieldName, values: FormValues) => {
   switch (name) {
@@ -74,6 +88,8 @@ const validateField = (name: FieldName, values: FormValues) => {
       return validatePassword(values.password);
     case "confirmPassword":
       return validateConfirmPassword(values.password, values.confirmPassword);
+    case "role":
+      return validateRole(values.role);
   }
 };
 
@@ -84,6 +100,7 @@ const SignUpForm = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "seeker",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -137,31 +154,37 @@ const SignUpForm = () => {
         values.password,
         values.confirmPassword,
       ),
+      role: validateRole(values.role),
     };
 
     setErrors(nextErrors);
 
     if (Object.values(nextErrors).some(Boolean)) return;
 
-    // TODO: integrate authentication here.
-    const form = event.currentTarget
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries()) as {name: string; email: string; password: string;}
-    const {data:resData, error} = await signUp.email({
-      ...data
-    },{
-      onRequest:()=>{
-        toast.loading("Creating your account...", {id: "sign-up"})
+    await signUp.email(
+      {
+        name: values.name.trim(),
+        email: values.email.trim(),
+        password: values.password,
+        role: values.role,
       },
-      onSuccess:()=>{
-        toast.success("Account created successfully!", {id: "sign-up"})
-        router.push("/")
+      {
+        onRequest: () => {
+          toast.loading("Creating your account...", { id: "sign-up" });
+        },
+        onSuccess: () => {
+          toast.success("Account created successfully!", { id: "sign-up" });
+          router.push("/");
+        },
+        onError: (err) => {
+          toast.error(
+            err.error.message ||
+              "An error occurred while creating your account.",
+            { id: "sign-up" },
+          );
+        },
       },
-      onError:(err)=>{
-        toast.error(err.error.message || "An error occurred while creating your account.", {id: "sign-up"})
-      }
-
-    })
+    );
   };
 
   return (
@@ -196,6 +219,41 @@ const SignUpForm = () => {
           </p>
         )}
       </div>
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-sm font-medium text-neutral-200">
+          Joining HireLoop as 
+        </legend>
+        <div className="grid grid-cols-3 gap-2">
+          {roles.map((role) => (
+            <label
+              key={role.value}
+              className={`flex cursor-pointer items-center justify-center rounded-lg border px-2 py-2.5 text-center text-xs font-medium transition-colors has-focus-visible:ring-3 has-focus-visible:ring-[#5C53FE]/30 ${
+                values.role === role.value
+                  ? "border-[#5C53FE] bg-[#5C53FE]/15 text-white"
+                  : "border-white/10 bg-white/5 text-neutral-400 hover:border-white/20 hover:text-neutral-200"
+              }`}
+            >
+              <input
+                type="radio"
+                name="role"
+                value={role.value}
+                checked={values.role === role.value}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                aria-describedby={errors.role ? "role-error" : undefined}
+                className="sr-only"
+              />
+              {role.label}
+            </label>
+          ))}
+        </div>
+        {errors.role && (
+          <p id="role-error" role="alert" className="text-xs text-destructive">
+            {errors.role}
+          </p>
+        )}
+      </fieldset>
 
       <div className="flex flex-col gap-2">
         <label htmlFor="email" className="text-sm font-medium text-neutral-200">
