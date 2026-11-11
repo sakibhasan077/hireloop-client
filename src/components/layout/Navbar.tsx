@@ -10,37 +10,39 @@ import { usePathname, useRouter } from "next/navigation";
 import { signOut, useSession } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 
-const links = [
-  { name: "Browse Jobs", href: "/jobs" },
-  { name: "Company", href: "/company" },
-  { name: "Pricing", href: "/pricing" },
-];
-
 const isActive = (pathname: string, href: string) =>
   pathname === href || pathname.startsWith(`${href}/`);
 
 const Navbar = () => {
-  const router = useRouter()
+  const router = useRouter();
   const { data: session } = useSession();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const user = session?.user;
   // The dashboard has its own chrome (sidebar), so hide the site navbar there.
+  const links = [
+    { name: "Browse Jobs", href: "/jobs" },
+    { name: "Company", href: "/company" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "Dashboard", href: `/dashboard/${session?.user.role || "seeker"}` },
+  ];
   const isDashboard =
     pathname === "/dashboard" || pathname.startsWith("/dashboard/");
   const handleSignout = async () => {
     await signOut({
       fetchOptions: {
-        onRequest:() =>{
-          toast.loading("Signing out...", {id: "signOut"});
+        onRequest: () => {
+          toast.loading("Signing out...", { id: "signOut" });
         },
         onSuccess: () => {
           router.push("/sign-in"); // redirect to login page
-          toast.success("Signed out successfully",{id: "signOut"});
+          toast.success("Signed out successfully", { id: "signOut" });
         },
-        onError: (err) =>{
-          toast.error(`Error signing out: ${err.error.message}`, {id: "signOut"});
-        }
+        onError: (err) => {
+          toast.error(`Error signing out: ${err.error.message}`, {
+            id: "signOut",
+          });
+        },
       },
     });
   };
