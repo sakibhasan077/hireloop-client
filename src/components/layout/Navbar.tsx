@@ -25,6 +25,9 @@ const Navbar = () => {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const user = session?.user;
+  // The dashboard has its own chrome (sidebar), so hide the site navbar there.
+  const isDashboard =
+    pathname === "/dashboard" || pathname.startsWith("/dashboard/");
   const handleSignout = async () => {
     await signOut({
       fetchOptions: {
@@ -41,6 +44,9 @@ const Navbar = () => {
       },
     });
   };
+
+  if (isDashboard) return null;
+
   return (
     <header className="fixed top-0 z-50 w-full px-3 pt-1.5 sm:px-5 sm:pt-2">
       <div className="relative mx-auto flex h-9 max-w-7xl items-center justify-between gap-2 rounded-xl border border-white/10 bg-[#141414] px-3 shadow-lg sm:h-12 sm:px-4">
