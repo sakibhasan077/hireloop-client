@@ -46,11 +46,16 @@ const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"];
 
 const FREQUENCIES = ["per hour", "per day", "per month", "per year"];
 
+export const JOB_STATUSES = ["Active", "Paused", "Draft", "Expired"] as const;
+
+export type JobStatus = (typeof JOB_STATUSES)[number];
+
 export type JobForm = {
   jobTitle: string;
   companyName: string;
   jobCategory: string;
   jobType: string;
+  status: JobStatus;
   remote: boolean;
   jobLocation: string;
   applicationDeadline: string;
@@ -66,6 +71,7 @@ const initialForm: JobForm = {
   companyName: "",
   jobCategory: "",
   jobType: "Full-time",
+  status: "Active",
   remote: false,
   jobLocation: "",
   applicationDeadline: "",
@@ -229,6 +235,27 @@ const NewJobForm = () => {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="status">
+                Job Status <RequiredMark />
+              </Label>
+              <Select
+                value={form.status}
+                onValueChange={(value) => setField("status", (value ?? "Active") as JobStatus)}
+              >
+                <SelectTrigger id="status" className="h-10 w-full bg-white/3">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {JOB_STATUSES.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
