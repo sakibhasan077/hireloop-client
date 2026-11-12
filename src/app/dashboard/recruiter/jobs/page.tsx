@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Code2,
   Copy,
+  EllipsisVertical,
   MapPin,
   Megaphone,
   Palette,
@@ -37,6 +38,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { getJobs } from "@/lib/api/job";
 
 export const metadata: Metadata = {
   title: "Manage Job Posts — HireLoop",
@@ -51,104 +53,11 @@ type JobStatus = "Active" | "Paused" | "Draft" | "Expired";
  * from the job form; the remaining fields are management-only metadata.
  */
 type JobPost = JobForm & {
-  id: string;
+  _id: string;
   applicants: number;
   status: JobStatus;
   postedAt: string;
 };
-
-const jobs: JobPost[] = [
-  {
-    id: "job-1",
-    jobTitle: "Frontend Developer",
-    companyName: "HirePlus Network",
-    jobCategory: "Engineering & Tech",
-    jobType: "Full-time",
-    remote: true,
-    jobLocation: "New York, USA",
-    applicationDeadline: "2025-05-30",
-    minSalary: "25",
-    maxSalary: "40",
-    frequency: "per hour",
-    responsibilities: "Build and maintain accessible, high-performance user interfaces.",
-    qualifications: "3+ years of experience with React, TypeScript, and modern state architectures.",
-    applicants: 34,
-    status: "Active",
-    postedAt: "2 days ago",
-  },
-  {
-    id: "job-2",
-    jobTitle: "Senior Product Designer",
-    companyName: "HirePlus Labs",
-    jobCategory: "Design",
-    jobType: "Full-time",
-    remote: false,
-    jobLocation: "London, UK (Hybrid)",
-    applicationDeadline: "2025-06-14",
-    minSalary: "80000",
-    maxSalary: "110000",
-    frequency: "per year",
-    responsibilities: "Own end-to-end product design across web and mobile experiences.",
-    qualifications: "5+ years of product design experience with a strong portfolio.",
-    applicants: 19,
-    status: "Active",
-    postedAt: "5 days ago",
-  },
-  {
-    id: "job-3",
-    jobTitle: "DevOps Specialist",
-    companyName: "HirePlus Platform",
-    jobCategory: "Infrastructure",
-    jobType: "Full-time",
-    remote: true,
-    jobLocation: "Berlin, Germany",
-    applicationDeadline: "2025-06-30",
-    minSalary: "90000",
-    maxSalary: "120000",
-    frequency: "per year",
-    responsibilities: "Operate and harden CI/CD pipelines, cloud infrastructure, and observability.",
-    qualifications: "Hands-on experience with AWS, Kubernetes, Terraform, and Docker.",
-    applicants: 12,
-    status: "Active",
-    postedAt: "5 days ago",
-  },
-  {
-    id: "job-4",
-    jobTitle: "Product Marketing Lead",
-    companyName: "HirePlus Network",
-    jobCategory: "Marketing",
-    jobType: "Full-time",
-    remote: false,
-    jobLocation: "London, UK (Hybrid)",
-    applicationDeadline: "2025-06-15",
-    minSalary: "80000",
-    maxSalary: "105000",
-    frequency: "per year",
-    responsibilities: "Lead positioning, launch strategy, and messaging for the HireLoop suite.",
-    qualifications: "7+ years in B2B product marketing with a track record of successful launches.",
-    applicants: 27,
-    status: "Active",
-    postedAt: "1 week ago",
-  },
-  {
-    id: "job-5",
-    jobTitle: "QA Automation Engineer",
-    companyName: "HirePlus Platform",
-    jobCategory: "Quality",
-    jobType: "Part-time",
-    remote: false,
-    jobLocation: "Dublin, Ireland (Hybrid)",
-    applicationDeadline: "2025-05-01",
-    minSalary: "35",
-    maxSalary: "50",
-    frequency: "per hour",
-    responsibilities: "Design and maintain automated test suites for web applications.",
-    qualifications: "Experience with Playwright or Cypress and API testing tools.",
-    applicants: 8,
-    status: "Expired",
-    postedAt: "3 months ago",
-  },
-];
 
 const categoryVisuals: Record<string, { icon: LucideIcon; className: string }> = {
   "Engineering & Tech": {
@@ -257,10 +166,10 @@ function StatusBadge({ status }: { status: JobStatus }) {
       variant="outline"
       className={cn(
         "gap-1.5 border-transparent px-2 text-[11px] font-medium",
-        styles.badge
+        styles?.badge || ""
       )}
     >
-      <span className={cn("size-1.5 rounded-full", styles.dot)} />
+      <span className={cn("size-1.5 rounded-full", styles?.dot)} />
       {status}
     </Badge>
   );
@@ -299,7 +208,7 @@ function JobActions({ job }: { job: JobPost }) {
       <Button
         variant="outline"
         size="sm"
-        className="border-white/10 bg-white/3 hover:bg-white/[0.07]"
+        className="border-white/10 bg-[#5C53FE]/3 hover:bg-white/[0.07]"
         aria-label={`View ${job.jobTitle}`}
       >
         <Pencil />
@@ -333,9 +242,9 @@ function JobActions({ job }: { job: JobPost }) {
             />
           }
         >
-          <Copy />
+          <EllipsisVertical/>
         </TooltipTrigger>
-        <TooltipContent>Duplicate job post</TooltipContent>
+        {/* <TooltipContent>Duplicate job post</TooltipContent> */}
       </Tooltip>
     </div>
   );
@@ -403,7 +312,8 @@ function MobileJobCard({ job }: { job: JobPost }) {
   );
 }
 
-const ManageJobsPage = () => {
+const ManageJobsPage = async() => {
+  const jobs:JobPost[] = await getJobs();
   return (
     <TooltipProvider>
       <main className="min-h-screen bg-[#09090b] px-4 py-8 sm:px-8">
@@ -438,7 +348,7 @@ const ManageJobsPage = () => {
             {/* Mobile: stacked cards keep every field readable without horizontal scrolling. */}
             <ul className="divide-y divide-white/5 md:hidden">
               {jobs.map((job) => (
-                <MobileJobCard key={job.id} job={job} />
+                <MobileJobCard key={job._id} job={job} />
               ))}
             </ul>
 
@@ -477,7 +387,7 @@ const ManageJobsPage = () => {
                 <TableBody>
                   {jobs.map((job) => (
                     <TableRow
-                      key={job.id}
+                      key={job._id}
                       className="border-white/5 hover:bg-white/3"
                     >
                       <TableCell className="max-w-60 py-4 pl-5">
