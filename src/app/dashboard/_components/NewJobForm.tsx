@@ -28,6 +28,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { createJobs } from "@/lib/actions/jobs";
 
 const JOB_CATEGORIES = [
   "Engineering & Tech",
@@ -45,7 +46,7 @@ const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"];
 
 const FREQUENCIES = ["per hour", "per day", "per month", "per year"];
 
-type JobForm = {
+export type JobForm = {
   jobTitle: string;
   companyName: string;
   jobCategory: string;
@@ -98,7 +99,7 @@ const NewJobForm = () => {
   const setField = <K extends keyof JobForm>(key: K, value: JobForm[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!form.jobTitle || !form.jobCategory || !form.jobLocation || !form.applicationDeadline) {
@@ -107,9 +108,13 @@ const NewJobForm = () => {
     }
 
     // The collected data is a plain object — ready to send to an API.
-    console.log("New job:", form);
-    toast.success(`"${form.jobTitle}" has been published.`);
+    const jobData = {...form}
+    const result = await createJobs(jobData)
+    if(result.insertedId){
+      toast.success(`"${form.jobTitle}" has been published.`);
+    }
     setForm(initialForm);
+
   };
 
   return (
