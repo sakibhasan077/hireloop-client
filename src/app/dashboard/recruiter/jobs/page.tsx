@@ -58,16 +58,20 @@ export type JobPost = JobForm & {
   postedAt: string;
 };
 
-const categoryVisuals: Record<string, { icon: LucideIcon; className: string }> = {
-  "Engineering & Tech": {
-    icon: Code2,
-    className: "bg-[#5C53FE]/15 text-[#5C53FE]",
-  },
-  Design: { icon: Palette, className: "bg-orange-500/15 text-orange-400" },
-  Infrastructure: { icon: Server, className: "bg-sky-500/15 text-sky-400" },
-  Marketing: { icon: Megaphone, className: "bg-pink-500/15 text-pink-400" },
-  Quality: { icon: ShieldCheck, className: "bg-emerald-500/15 text-emerald-400" },
-}; // It has a problem , It's not dynamic
+const categoryVisuals: Record<string, { icon: LucideIcon; className: string }> =
+  {
+    "Engineering & Tech": {
+      icon: Code2,
+      className: "bg-[#5C53FE]/15 text-[#5C53FE]",
+    },
+    Design: { icon: Palette, className: "bg-orange-500/15 text-orange-400" },
+    Infrastructure: { icon: Server, className: "bg-sky-500/15 text-sky-400" },
+    Marketing: { icon: Megaphone, className: "bg-pink-500/15 text-pink-400" },
+    Quality: {
+      icon: ShieldCheck,
+      className: "bg-emerald-500/15 text-emerald-400",
+    },
+  }; // It has a problem , It's not dynamic
 
 const fallbackVisual = {
   icon: BriefcaseBusiness,
@@ -149,7 +153,7 @@ function JobLogo({ category }: { category: string }) {
       aria-hidden="true"
       className={cn(
         "flex size-9 shrink-0 items-center justify-center rounded-lg",
-        className
+        className,
       )}
     >
       <Icon className="size-4" />
@@ -165,7 +169,7 @@ function StatusBadge({ status }: { status: JobStatus }) {
       variant="outline"
       className={cn(
         "gap-1.5 border-transparent px-2 text-[11px] font-medium",
-        styles?.badge || ""
+        styles?.badge || "",
       )}
     >
       <span className={cn("size-1.5 rounded-full", styles?.dot)} />
@@ -204,15 +208,19 @@ function Location({ job }: { job: JobPost }) {
 function JobActions({ job }: { job: JobPost }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-1">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-muted-foreground hover:text-foreground"
-        aria-label={`View ${job.jobTitle}`}
+      <Link
+        href={`/dashboard/recruiter/jobs/${job._id}`}
       >
-        <Eye className="size-3.5" />
-        View
-      </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-foreground cursor-pointer"
+          aria-label={`View ${job.jobTitle}`}
+        >
+          <Eye className="size-3.5" />
+          View
+        </Button>
+      </Link>
 
       <Button
         variant="outline"
@@ -226,12 +234,8 @@ function JobActions({ job }: { job: JobPost }) {
 
       <Tooltip>
         <TooltipTrigger
-          render={
-            <DeleteJobDialog job = {job}></DeleteJobDialog>
-          }
-        >
-
-        </TooltipTrigger>
+          render={<DeleteJobDialog job={job}></DeleteJobDialog>}
+        ></TooltipTrigger>
         <TooltipContent>Delete job post</TooltipContent>
       </Tooltip>
     </div>
@@ -241,7 +245,9 @@ function JobActions({ job }: { job: JobPost }) {
 function Deadline({ job }: { job: JobPost }) {
   return (
     <div className="min-w-0">
-      <p className="truncate text-sm">{formatDeadline(job.applicationDeadline)}</p>
+      <p className="truncate text-sm">
+        {formatDeadline(job.applicationDeadline)}
+      </p>
       <p className="mt-0.5 truncate text-xs text-muted-foreground">
         {job.status === "Expired" ? "Closed" : `Posted ${job.postedAt}`}
       </p>
@@ -284,7 +290,7 @@ function MobileJobCard({ job }: { job: JobPost }) {
           <dt className="text-muted-foreground">Applicants</dt>
           <dd className="mt-0.5 flex items-center gap-1.5">
             <Users className="size-3.5 text-muted-foreground" />
-            {job.applicants} Candidates
+            {job.applicants || 0} Candidates
           </dd>
         </div>
         <div>
@@ -300,8 +306,8 @@ function MobileJobCard({ job }: { job: JobPost }) {
   );
 }
 
-const ManageJobsPage = async() => {
-  const jobs:JobPost[] = await getJobs();
+const ManageJobsPage = async () => {
+  const jobs: JobPost[] = await getJobs();
   return (
     <TooltipProvider>
       <main className="font-inter min-h-screen bg-[#09090b] px-4 py-8 sm:px-8">
@@ -402,7 +408,9 @@ const ManageJobsPage = async() => {
                         </div>
                       </TableCell>
 
-                      <TableCell className="hidden text-sm lg:table-cell">{job.jobType}</TableCell>
+                      <TableCell className="hidden text-sm lg:table-cell">
+                        {job.jobType}
+                      </TableCell>
 
                       <TableCell className="hidden lg:table-cell">
                         <Compensation job={job} />
