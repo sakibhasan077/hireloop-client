@@ -167,7 +167,7 @@ export function DashboardSidebar() {
   return (
     <Sidebar>
       <SidebarHeader />
-      <SidebarContent>
+      <SidebarContent className="font-inter">
         <SidebarGroup />
         <SidebarGroup />
         <SidebarGroup>

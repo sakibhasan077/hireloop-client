@@ -5,8 +5,7 @@ import {
   Building2,
   ChevronRight,
   Code2,
-  Copy,
-  EllipsisVertical,
+  Eye,
   MapPin,
   Megaphone,
   Palette,
@@ -14,7 +13,6 @@ import {
   Plus,
   Server,
   ShieldCheck,
-  Trash2,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -39,6 +37,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { getJobs } from "@/lib/api/job";
+import { DeleteJobDialog } from "../../_components/DeleteJobDialog";
 
 export const metadata: Metadata = {
   title: "Manage Job Posts — HireLoop",
@@ -52,7 +51,7 @@ type JobStatus = "Active" | "Paused" | "Draft" | "Expired";
  * A job listing as shown in the management table. The core listing fields come
  * from the job form; the remaining fields are management-only metadata.
  */
-type JobPost = JobForm & {
+export type JobPost = JobForm & {
   _id: string;
   applicants: number;
   status: JobStatus;
@@ -179,7 +178,7 @@ function Compensation({ job }: { job: JobPost }) {
   const { amount, suffix } = formatCompensation(job);
 
   return (
-    <span className="text-sm font-medium">
+    <span className="block truncate text-sm font-medium">
       {amount}
       {suffix ? (
         <span className="ml-1 text-xs font-normal text-muted-foreground">
@@ -192,11 +191,11 @@ function Compensation({ job }: { job: JobPost }) {
 
 function Location({ job }: { job: JobPost }) {
   return (
-    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+    <span className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground">
       <MapPin className="size-3.5 shrink-0" />
-      {job.jobLocation}
+      <span className="truncate">{job.jobLocation}</span>
       {job.remote ? (
-        <span className="font-medium text-[#5C53FE]">· Remote</span>
+        <span className="shrink-0 font-medium text-[#5C53FE]">· Remote</span>
       ) : null}
     </span>
   );
@@ -204,47 +203,36 @@ function Location({ job }: { job: JobPost }) {
 
 function JobActions({ job }: { job: JobPost }) {
   return (
-    <div className="flex items-center justify-end gap-1">
+    <div className="flex flex-wrap items-center justify-end gap-1">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-muted-foreground hover:text-foreground"
+        aria-label={`View ${job.jobTitle}`}
+      >
+        <Eye className="size-3.5" />
+        View
+      </Button>
+
       <Button
         variant="outline"
         size="sm"
-        className="border-white/10 bg-[#5C53FE]/3 hover:bg-white/[0.07]"
-        aria-label={`View ${job.jobTitle}`}
+        className="border-[#5C53FE]/10 bg-[#5C53FE]/30 hover:bg-[#5C53FE]/[0.07]"
+        aria-label={`Update ${job.jobTitle}`}
       >
-        <Pencil />
-        View
+        <Pencil className="size-3" />
+        Update
       </Button>
 
       <Tooltip>
         <TooltipTrigger
           render={
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground hover:text-red-400"
-              aria-label={`Delete ${job.jobTitle}`}
-            />
+            <DeleteJobDialog job = {job}></DeleteJobDialog>
           }
         >
-          <Trash2 />
+
         </TooltipTrigger>
         <TooltipContent>Delete job post</TooltipContent>
-      </Tooltip>
-
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground hover:text-foreground"
-              aria-label={`Duplicate ${job.jobTitle}`}
-            />
-          }
-        >
-          <EllipsisVertical/>
-        </TooltipTrigger>
-        {/* <TooltipContent>Duplicate job post</TooltipContent> */}
       </Tooltip>
     </div>
   );
@@ -252,9 +240,9 @@ function JobActions({ job }: { job: JobPost }) {
 
 function Deadline({ job }: { job: JobPost }) {
   return (
-    <div>
-      <p className="text-sm">{formatDeadline(job.applicationDeadline)}</p>
-      <p className="mt-0.5 text-xs text-muted-foreground">
+    <div className="min-w-0">
+      <p className="truncate text-sm">{formatDeadline(job.applicationDeadline)}</p>
+      <p className="mt-0.5 truncate text-xs text-muted-foreground">
         {job.status === "Expired" ? "Closed" : `Posted ${job.postedAt}`}
       </p>
     </div>
@@ -316,7 +304,7 @@ const ManageJobsPage = async() => {
   const jobs:JobPost[] = await getJobs();
   return (
     <TooltipProvider>
-      <main className="min-h-screen bg-[#09090b] px-4 py-8 sm:px-8">
+      <main className="font-inter min-h-screen bg-[#09090b] px-4 py-8 sm:px-8">
         <div className="mx-auto w-full max-w-6xl space-y-6">
           <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
@@ -352,33 +340,33 @@ const ManageJobsPage = async() => {
               ))}
             </ul>
 
-            {/* Desktop/tablet: full table with progressively revealed columns. */}
+            {/* Tablet/Desktop: full table, columns reveal progressively so it never scrolls. */}
             <div className="hidden md:block">
-              <Table className="min-w-160">
+              <Table className="table-fixed">
                 <TableHeader className="bg-white/3">
                   <TableRow className="border-white/5 hover:bg-transparent">
-                    <TableHead className="py-3 pl-5 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                    <TableHead className="truncate py-3 pl-5 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
                       Job Title &amp; Dept
                     </TableHead>
-                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase xl:table-cell">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase 2xl:table-cell 2xl:w-[160px]">
                       Company &amp; Location
                     </TableHead>
-                    <TableHead className="py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase lg:table-cell lg:w-[76px]">
                       Type
                     </TableHead>
-                    <TableHead className="py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase lg:table-cell lg:w-[130px]">
                       Compensation
                     </TableHead>
-                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase xl:table-cell">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase 2xl:table-cell 2xl:w-[120px]">
                       Applicants
                     </TableHead>
-                    <TableHead className="py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                    <TableHead className="w-[90px] py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
                       Status
                     </TableHead>
-                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase lg:table-cell">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase xl:table-cell xl:w-[100px]">
                       Deadline
                     </TableHead>
-                    <TableHead className="py-3 pr-5 text-right text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                    <TableHead className="w-[220px] py-3 pr-5 text-right text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
                       Actions
                     </TableHead>
                   </TableRow>
@@ -390,7 +378,7 @@ const ManageJobsPage = async() => {
                       key={job._id}
                       className="border-white/5 hover:bg-white/3"
                     >
-                      <TableCell className="max-w-60 py-4 pl-5">
+                      <TableCell className="py-4 pl-5">
                         <div className="flex items-center gap-3">
                           <JobLogo category={job.jobCategory} />
                           <div className="min-w-0">
@@ -404,7 +392,7 @@ const ManageJobsPage = async() => {
                         </div>
                       </TableCell>
 
-                      <TableCell className="hidden max-w-55 xl:table-cell">
+                      <TableCell className="hidden 2xl:table-cell">
                         <div className="min-w-0">
                           <p className="flex items-center gap-1.5 truncate text-sm">
                             <Building2 className="size-3.5 shrink-0 text-muted-foreground" />
@@ -414,13 +402,13 @@ const ManageJobsPage = async() => {
                         </div>
                       </TableCell>
 
-                      <TableCell className="text-sm">{job.jobType}</TableCell>
+                      <TableCell className="hidden text-sm lg:table-cell">{job.jobType}</TableCell>
 
-                      <TableCell>
+                      <TableCell className="hidden lg:table-cell">
                         <Compensation job={job} />
                       </TableCell>
 
-                      <TableCell className="hidden xl:table-cell">
+                      <TableCell className="hidden 2xl:table-cell">
                         <span className="flex items-center gap-1.5">
                           <Users className="size-3.5 text-muted-foreground" />
                           <span className="text-sm">{job.applicants}</span>
@@ -434,7 +422,7 @@ const ManageJobsPage = async() => {
                         <StatusBadge status={job.status} />
                       </TableCell>
 
-                      <TableCell className="hidden lg:table-cell">
+                      <TableCell className="hidden xl:table-cell">
                         <Deadline job={job} />
                       </TableCell>
 

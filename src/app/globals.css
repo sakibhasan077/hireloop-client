@@ -10,6 +10,7 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  --font-inter: var(--font-inter-family);
   --font-manrope: var(--font-manrope-family);
   --font-space-mono: var(--font-space-mono-family);
   --font-plus-jakarta: var(--font-plus-jakarta-family);

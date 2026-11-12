@@ -7,9 +7,9 @@ export const metadata: Metadata = {
 };
 const NewJobPage = () => {
   return (
-    <>
+    <div className="font-inter">
       <NewJobForm></NewJobForm>
-    </>
+    </div>
   );
 };
 

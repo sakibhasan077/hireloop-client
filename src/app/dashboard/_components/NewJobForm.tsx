@@ -121,8 +121,8 @@ const NewJobForm = () => {
     <main className="min-h-screen bg-[#09090b] px-4 py-8 sm:px-8">
       <form onSubmit={handleSubmit} className="mx-auto w-full max-w-3xl space-y-6">
         {/* Header */}
-        <header className="flex items-start justify-between gap-4">
-          <div className="flex items-start gap-3">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
             <Link
               href="/dashboard/recruiter/jobs"
               aria-label="Back to manage jobs"
@@ -130,10 +130,10 @@ const NewJobForm = () => {
             >
               <ArrowLeft className="size-4" />
             </Link>
-            <div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
                 <span>Manage Jobs</span>
-                <ChevronRight className="size-3.5" />
+                <ChevronRight className="size-3.5 shrink-0" />
                 <span>Create New Listing</span>
               </div>
               <h1 className="mt-1 text-2xl font-bold tracking-tight">Post a New Job</h1>
@@ -143,7 +143,10 @@ const NewJobForm = () => {
               </p>
             </div>
           </div>
-          <Button type="submit" className="bg-[#5C53FE] text-white hover:bg-[#5C53FE]/90">
+          <Button
+            type="submit"
+            className="w-full bg-[#5C53FE] text-white hover:bg-[#5C53FE]/90 sm:w-auto sm:shrink-0"
+          >
             Publish Job <ArrowRight className="ml-1 size-4" />
           </Button>
         </header>
