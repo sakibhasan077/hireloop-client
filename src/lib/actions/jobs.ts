@@ -13,6 +13,18 @@ export const createJobs = async (data:JobForm) => {
   return res.json();
 }
 
+// update
+export const updateJobs = async (updateId:string, updateData:JobForm) =>{
+  const res = await fetch(`${BASE_URL}/jobs/${updateId}`,{
+    method: "PATCH",
+    headers: {
+      "Content-Type" : "application/json"
+    },
+    body: JSON.stringify(updateData)
+  });
+  return res.json();
+}
+
 //delete
 export const deleteJobs = async (jobId:string) =>{
   const res = await fetch(`${BASE_URL}/jobs/${jobId}`,{

@@ -208,9 +208,7 @@ function Location({ job }: { job: JobPost }) {
 function JobActions({ job }: { job: JobPost }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-1">
-      <Link
-        href={`/dashboard/recruiter/jobs/${job._id}`}
-      >
+      <Link href={`/dashboard/recruiter/jobs/${job._id}`}>
         <Button
           variant="ghost"
           size="sm"
@@ -222,15 +220,17 @@ function JobActions({ job }: { job: JobPost }) {
         </Button>
       </Link>
 
-      <Button
-        variant="outline"
-        size="sm"
-        className="border-[#5C53FE]/10 bg-[#5C53FE]/30 hover:bg-[#5C53FE]/[0.07]"
-        aria-label={`Update ${job.jobTitle}`}
-      >
-        <Pencil className="size-3" />
-        Update
-      </Button>
+      <Link href={`/dashboard/recruiter/jobs/updateJobs/${job._id}`}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-[#5C53FE]/10 cursor-pointer bg-[#5C53FE]/30 hover:bg-[#5C53FE]/[0.07]"
+          aria-label={`Update ${job.jobTitle}`}
+        >
+          <Pencil className="size-3" />
+          Update
+        </Button>
+      </Link>
 
       <Tooltip>
         <TooltipTrigger
