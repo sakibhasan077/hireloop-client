@@ -352,25 +352,25 @@ const ManageJobsPage = async () => {
                     <TableHead className="truncate py-3 pl-5 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
                       Job Title &amp; Dept
                     </TableHead>
-                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase 2xl:table-cell 2xl:w-[160px]">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase 2xl:table-cell 2xl:w-40">
                       Company &amp; Location
                     </TableHead>
-                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase lg:table-cell lg:w-[76px]">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase lg:table-cell lg:w-19">
                       Type
                     </TableHead>
-                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase lg:table-cell lg:w-[130px]">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase lg:table-cell lg:w-32.5">
                       Compensation
                     </TableHead>
-                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase 2xl:table-cell 2xl:w-[120px]">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase 2xl:table-cell 2xl:w-30">
                       Applicants
                     </TableHead>
-                    <TableHead className="w-[90px] py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                    <TableHead className="w-22.5 py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
                       Status
                     </TableHead>
-                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase xl:table-cell xl:w-[100px]">
+                    <TableHead className="hidden py-3 text-[11px] font-medium tracking-wider text-muted-foreground uppercase xl:table-cell xl:w-25">
                       Deadline
                     </TableHead>
-                    <TableHead className="w-[220px] py-3 pr-5 text-right text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                    <TableHead className="w-55 py-3 pr-5 text-right text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
                       Actions
                     </TableHead>
                   </TableRow>

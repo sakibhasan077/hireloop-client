@@ -21,7 +21,7 @@ const Navbar = () => {
   const user = session?.user;
   // The dashboard has its own chrome (sidebar), so hide the site navbar there.
   const links = [
-    { name: "Browse Jobs", href: "/jobs" },
+    { name: "Browse Jobs", href: "/brows-jobs" },
     { name: "Company", href: "/company" },
     { name: "Pricing", href: "/pricing" },
     { name: "Dashboard", href: `/dashboard/${session?.user.role || "seeker"}` },
