@@ -4,13 +4,23 @@ import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 export function JobSearchBar() {
+  const router = useRouter();
+  const  handleSubmit = (e: React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const searchQuery = formData.get("search") as string;
+    const params = new URLSearchParams();
+    params.set("search",searchQuery  as string)
+    router.push(`/brows-jobs?${params.toString()}`)
 
+  }
   return (
     // Search is visual only for now.
     // Wrap the input in a <form> and connect it to the query string later.
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-2.5 sm:flex-row">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
