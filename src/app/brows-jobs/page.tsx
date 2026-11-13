@@ -77,7 +77,7 @@ const BrowsJobsPage = async ({
             </div>
 
             {jobs.length > 0 ? (
-              <div className="space-y-3">
+              <div className="flex flex-col gap-2">
                 {jobs.map((job) => (
                   <JobCard key={job._id} job={job} />
                 ))}

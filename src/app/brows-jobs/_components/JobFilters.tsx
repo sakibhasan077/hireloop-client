@@ -1,6 +1,7 @@
-"use client"
+"use client";
+
 import { Card } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type FilterOption = {
   id: string;
@@ -15,15 +16,6 @@ type FilterGroup = {
   options: FilterOption[];
 };
 
-/**
- * Static filter options for now.
- * Replace these counts with real values and wire each input to the URL query
- * string when filtering is added.
- *
- * Job Type and Job Category use radio inputs, so only one option can be
- * selected per group. Work Mode uses checkboxes, so multiple options can be
- * selected.
- */
 const filterGroups: FilterGroup[] = [
   {
     title: "Job Type",
@@ -60,25 +52,24 @@ const filterGroups: FilterGroup[] = [
       { id: "job-category-other", label: "Other", count: 24 },
     ],
   },
-  // {
-  //   title: "Work Mode",
-  //   name: "remote",
-  //   type: "radio",
-  //   options: [
-  //     { id: "work-mode-remote", label: "Remote", count: 96 },
-  //     { id: "work-mode-on-site", label: "On-site", count: 144 },
-  //   ],
-  // },
 ];
 
 export function JobFilters() {
-  const router = useRouter()
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(e.target.name, e.target.value);
-    const params = new URLSearchParams();
-    params.set(e.target.name,e.target.value)
-    router.push(`/brows-jobs?${params.toString()}`)
-  }
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handleRadioChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    // Get all existing query parameters
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Update only the selected filter
+    params.set(e.target.name, e.target.value);
+
+    router.push(`/brows-jobs?${params.toString()}`);
+  };
+
   return (
     <Card className="h-fit gap-5 bg-[#121214] p-4 ring-white/10 lg:sticky lg:top-24">
       <h2 className="text-sm font-semibold text-white">Filters</h2>
@@ -103,9 +94,14 @@ export function JobFilters() {
                       onChange={handleRadioChange}
                       type={group.type}
                       value={option.label}
+                      checked={
+                        searchParams.get(group.name) === option.label
+                      }
                       className="size-3.5 shrink-0 cursor-pointer accent-[#5C53FE]"
                     />
+
                     <span className="flex-1">{option.label}</span>
+
                     <span className="text-[11px] text-white/35">
                       {option.count}
                     </span>
