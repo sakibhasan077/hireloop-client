@@ -87,6 +87,7 @@ const UpdateJobForm = ({ job }: { job: JobPost }) => {
     frequency: job.frequency ?? "per hour",
     responsibilities: job.responsibilities ?? "",
     qualifications: job.qualifications ?? "",
+    applicants: job.applicants ?? 0,
   });
 
   const setField = <K extends keyof JobForm>(key: K, value: JobForm[K]) =>

@@ -53,8 +53,6 @@ type JobStatus = "Active" | "Paused" | "Draft" | "Expired";
  */
 export type JobPost = JobForm & {
   _id: string;
-  applicants: number;
-  status: JobStatus;
   postedAt: string;
 };
 

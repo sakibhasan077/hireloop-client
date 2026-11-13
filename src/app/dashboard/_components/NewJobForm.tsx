@@ -64,6 +64,7 @@ export type JobForm = {
   frequency: string;
   responsibilities: string;
   qualifications: string;
+  applicants: number;
 };
 
 const initialForm: JobForm = {
@@ -80,13 +81,14 @@ const initialForm: JobForm = {
   frequency: "per hour",
   responsibilities: "",
   qualifications: "",
+  applicants: 0,
 };
 
 function SectionHeading({ step, title }: { step: number; title: string }) {
   return (
     <div className="flex items-center gap-1 border-b border-white/10 pb-3">
       <span className="flex items-center justify-center text-sm font-semibold ">
-      <Dot className="text-[#5C53FE] text-[30px]"></Dot>
+        <Dot className="text-[#5C53FE] text-[30px]"></Dot>
         {step}.
       </span>
       <h2 className="text-sm font-semibold">{title}</h2>
@@ -108,24 +110,31 @@ const NewJobForm = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!form.jobTitle || !form.jobCategory || !form.jobLocation || !form.applicationDeadline) {
+    if (
+      !form.jobTitle ||
+      !form.jobCategory ||
+      !form.jobLocation ||
+      !form.applicationDeadline
+    ) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
     // The collected data is a plain object — ready to send to an API.
-    const jobData = {...form}
-    const result = await createJobs(jobData)
-    if(result.insertedId){
+    const jobData = { ...form };
+    const result = await createJobs(jobData);
+    if (result.insertedId) {
       toast.success(`"${form.jobTitle}" has been published.`);
     }
     setForm(initialForm);
-
   };
 
   return (
     <main className="min-h-screen bg-[#09090b] px-4 py-8 sm:px-8">
-      <form onSubmit={handleSubmit} className="mx-auto w-full max-w-3xl space-y-6">
+      <form
+        onSubmit={handleSubmit}
+        className="mx-auto w-full max-w-3xl space-y-6"
+      >
         {/* Header */}
         <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
@@ -142,10 +151,12 @@ const NewJobForm = () => {
                 <ChevronRight className="size-3.5 shrink-0" />
                 <span>Create New Listing</span>
               </div>
-              <h1 className="mt-1 text-2xl font-bold tracking-tight">Post a New Job</h1>
+              <h1 className="mt-1 text-2xl font-bold tracking-tight">
+                Post a New Job
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Fill in the position specifications to attract qualified talent across our
-                network.
+                Fill in the position specifications to attract qualified talent
+                across our network.
               </p>
             </div>
           </div>
@@ -197,9 +208,14 @@ const NewJobForm = () => {
                 </Label>
                 <Select
                   value={form.jobCategory}
-                  onValueChange={(value) => setField("jobCategory", value ?? "")}
+                  onValueChange={(value) =>
+                    setField("jobCategory", value ?? "")
+                  }
                 >
-                  <SelectTrigger id="jobCategory" className="h-10 w-full bg-white/3">
+                  <SelectTrigger
+                    id="jobCategory"
+                    className="h-10 w-full bg-white/3"
+                  >
                     <SelectValue placeholder="Engineering & Tech" />
                   </SelectTrigger>
                   <SelectContent>
@@ -228,7 +244,7 @@ const NewJobForm = () => {
                       "h-10 rounded-lg border text-sm font-medium transition-colors",
                       form.jobType === type
                         ? "border-[#5C53FE] bg-[#5C53FE]/10 text-[#5C53FE]"
-                        : "border-white/10 text-muted-foreground hover:bg-white/5"
+                        : "border-white/10 text-muted-foreground hover:bg-white/5",
                     )}
                   >
                     {type}
@@ -243,7 +259,9 @@ const NewJobForm = () => {
               </Label>
               <Select
                 value={form.status}
-                onValueChange={(value) => setField("status", (value ?? "Active") as JobStatus)}
+                onValueChange={(value) =>
+                  setField("status", (value ?? "Active") as JobStatus)
+                }
               >
                 <SelectTrigger id="status" className="h-10 w-full bg-white/3">
                   <SelectValue />
@@ -263,7 +281,10 @@ const NewJobForm = () => {
         {/* 2. Location, Compensation & Timeline */}
         <Card className="bg-[#101012] ring-white/10">
           <CardContent className="space-y-5">
-            <SectionHeading step={2} title="Location, Compensation & Timeline" />
+            <SectionHeading
+              step={2}
+              title="Location, Compensation & Timeline"
+            />
 
             <div className="flex items-center justify-between gap-4 rounded-lg border border-[#5C53FE]/30 bg-[#5C53FE]/5 p-3.5">
               <div className="flex items-center gap-3">
@@ -316,7 +337,9 @@ const NewJobForm = () => {
                     type="date"
                     required
                     value={form.applicationDeadline}
-                    onChange={(e) => setField("applicationDeadline", e.target.value)}
+                    onChange={(e) =>
+                      setField("applicationDeadline", e.target.value)
+                    }
                     className="h-10 bg-white/3 pl-9"
                   />
                 </div>
@@ -364,9 +387,14 @@ const NewJobForm = () => {
                 <Label htmlFor="frequency">Frequency</Label>
                 <Select
                   value={form.frequency}
-                  onValueChange={(value) => setField("frequency", value ?? "per hour")}
+                  onValueChange={(value) =>
+                    setField("frequency", value ?? "per hour")
+                  }
                 >
-                  <SelectTrigger id="frequency" className="h-10 w-full bg-white/3">
+                  <SelectTrigger
+                    id="frequency"
+                    className="h-10 w-full bg-white/3"
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -400,7 +428,9 @@ const NewJobForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="qualifications">Qualifications & Requirements</Label>
+              <Label htmlFor="qualifications">
+                Qualifications & Requirements
+              </Label>
               <Textarea
                 id="qualifications"
                 rows={4}
