@@ -11,6 +11,17 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
 export function JobHero({ job }: { job: JobPost }) {
+  const router = useRouter()
+  const {data:session} = useSession();
+  const user = session?.user;
+  const handleApply = () =>{
+    if(!user){
+      router.push(`/sign-in?redirectTo=/brows-jobs/${job._id}`)
+      return
+    }else if(user.role === "seeker"){
+      console.log("Apply Successfully");
+    }
+  }
   return (
     <Card className="gap-0 bg-[#121214] p-4 ring-white/10 sm:p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -54,6 +65,7 @@ export function JobHero({ job }: { job: JobPost }) {
 
           {/* TODO: open the application form, or send guests to sign-in first. */}
           <Button
+            onClick = {handleApply}
             type="button"
             className="h-9 flex-1 bg-white px-5 text-sm font-medium text-black hover:bg-white/90 sm:flex-none"
           >

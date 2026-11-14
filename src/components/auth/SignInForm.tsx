@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signIn } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type FieldName = "email" | "password"; // type script ke bole dicchi ei form e ki ki input field ase
 type FormErrors = Partial<Record<FieldName, string>>;
@@ -43,6 +43,8 @@ const inputClassName =
 
 const SignInForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get("redirectTo") ?? "/";
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -100,7 +102,7 @@ const SignInForm = () => {
         },
         onSuccess: () => {
           toast.success("Signed in successfully!", { id: "sign-in" });
-          router.push("/");
+          router.push(redirectTo);
         },
         onError: (err) => {
           toast.error(
