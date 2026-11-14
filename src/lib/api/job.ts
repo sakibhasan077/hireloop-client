@@ -14,7 +14,8 @@ export const getSpecificJobData = async (jobId:string) =>{
 
 // application api
 // get
-export const getApplyJobData = async () =>{
-  const res = await fetch(`${BASE_URL}/applications`);
+export const getApplyJobData = async (query="") =>{
+  const url = `${BASE_URL}/applications?${query}`;
+  const res = await fetch(url);
   return res.json();
 }

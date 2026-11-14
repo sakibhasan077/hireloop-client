@@ -61,7 +61,7 @@ export function JobHero({ job }: { job: JobPost }) {
         status: job.status,
         archived: false,
       };
-      const userJobData:IJobApplicationResponse[] = await getApplyJobData()
+      const userJobData:IJobApplicationResponse[] = await getApplyJobData(`userId=${user.id}`)
       const isFindUserId = userJobData.find(item => item.jobId === application.jobId)
       if(isFindUserId){
         toast.error("You have already applied for this job");
