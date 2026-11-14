@@ -19,3 +19,9 @@ export const getApplyJobData = async (query="") =>{
   const res = await fetch(url);
   return res.json();
 }
+// count application
+export const getApplyJobDataCount = async (query="") =>{
+  const url = `${BASE_URL}/applications/count?${query}`;
+  const res = await fetch(url);
+  return res.json();
+}
