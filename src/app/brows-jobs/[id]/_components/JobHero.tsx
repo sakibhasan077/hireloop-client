@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { BadgeCheck, Bookmark, Building2 } from "lucide-react";
 
@@ -9,19 +9,73 @@ import { JobLogo } from "../../_components/JobLogo";
 import type { JobPost } from "../../_components/types";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { applyToAJob } from "@/lib/actions/jobs";
+import { getApplyJobData } from "@/lib/api/job";
+
+export interface IJobApplication {
+  jobId: string;
+  userId: string;
+  userEmail: string;
+  jobTitle: string;
+  companyName: string;
+  jobType: string;
+  remote: boolean;
+  jobLocation: string;
+  minSalary: string;
+  maxSalary: string;
+  salaryFrequency: string;
+  deadline: string;
+  appliedAt: string;
+  status: string;
+  archived: boolean;
+}
+
+export interface IJobApplicationResponse extends IJobApplication {
+  _id: string;
+}
 
 export function JobHero({ job }: { job: JobPost }) {
-  const router = useRouter()
-  const {data:session} = useSession();
+  const router = useRouter();
+  const { data: session } = useSession();
   const user = session?.user;
-  const handleApply = () =>{
-    if(!user){
-      router.push(`/sign-in?redirectTo=/brows-jobs/${job._id}`)
-      return
-    }else if(user.role === "seeker"){
-      console.log("Apply Successfully");
+  const handleApply = async () => {
+    if (!user) {
+      router.push(`/sign-in?redirectTo=/brows-jobs/${job._id}`);
+      return;
+    } else if (user.role === "seeker") {
+      const application:IJobApplication = {
+        jobId: job._id,
+        userId: user.id,
+        userEmail: user.email,
+        jobTitle: job.jobTitle,
+        companyName: job.companyName,
+        jobType: job.jobType,
+        remote: job.remote,
+        jobLocation: job.jobLocation,
+        minSalary: job.minSalary,
+        maxSalary: job.maxSalary,
+        salaryFrequency: job.frequency,
+        deadline: job.applicationDeadline,
+        appliedAt: new Date().toISOString(),
+        status: job.status,
+        archived: false,
+      };
+      const userJobData:IJobApplicationResponse[] = await getApplyJobData()
+      const isFindUserId = userJobData.find(item => item.jobId === application.jobId)
+      if(isFindUserId){
+        toast.error("You have already applied for this job");
+        return;
+      }
+      const result = await applyToAJob(application);
+      if (result.insertedId) {
+        toast.success("Application submitted successfully");
+        router.push("/brows-jobs");
+      }
+    } else {
+      toast.error("User not a Job Seeker");
     }
-  }
+  };
   return (
     <Card className="gap-0 bg-[#121214] p-4 ring-white/10 sm:p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -65,7 +119,7 @@ export function JobHero({ job }: { job: JobPost }) {
 
           {/* TODO: open the application form, or send guests to sign-in first. */}
           <Button
-            onClick = {handleApply}
+            onClick={handleApply}
             type="button"
             className="h-9 flex-1 bg-white px-5 text-sm font-medium text-black hover:bg-white/90 sm:flex-none"
           >
