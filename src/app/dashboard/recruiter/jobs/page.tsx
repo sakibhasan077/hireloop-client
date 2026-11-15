@@ -38,6 +38,8 @@ import {
 import { cn } from "@/lib/utils";
 import { getJobs } from "@/lib/api/job";
 import { DeleteJobDialog } from "../../_components/DeleteJobDialog";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Manage Job Posts — HireLoop",
@@ -305,7 +307,10 @@ function MobileJobCard({ job }: { job: JobPost }) {
 }
 
 const ManageJobsPage = async () => {
-  const jobs: JobPost[] = await getJobs();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const jobs: JobPost[] = await getJobs(`recruiterId=${session?.user.id}`);
   return (
     <TooltipProvider>
       <main className="font-inter min-h-screen bg-[#09090b] px-4 py-8 sm:px-8">

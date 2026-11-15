@@ -29,6 +29,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { createJobs } from "@/lib/actions/jobs";
+import { useSession } from "@/lib/auth-client";
 
 const JOB_CATEGORIES = [
   "Engineering & Tech",
@@ -53,6 +54,8 @@ export type JobStatus = (typeof JOB_STATUSES)[number];
 export type JobForm = {
   jobTitle: string;
   companyName: string;
+  recruiterId: string;
+  companyId?: string;
   jobCategory: string;
   jobType: string;
   status: JobStatus;
@@ -70,6 +73,7 @@ export type JobForm = {
 const initialForm: JobForm = {
   jobTitle: "",
   companyName: "",
+  recruiterId: "",
   jobCategory: "",
   jobType: "Full-time",
   status: "Active",
@@ -102,6 +106,7 @@ function RequiredMark() {
 }
 
 const NewJobForm = () => {
+  const {data:session} =useSession()
   const [form, setForm] = useState<JobForm>(initialForm);
 
   const setField = <K extends keyof JobForm>(key: K, value: JobForm[K]) =>
@@ -121,7 +126,8 @@ const NewJobForm = () => {
     }
 
     // The collected data is a plain object — ready to send to an API.
-    const jobData = { ...form };
+    initialForm.recruiterId = session?.user.id as string;
+    const jobData = { ...form, };
     const result = await createJobs(jobData);
     if (result.insertedId) {
       toast.success(`"${form.jobTitle}" has been published.`);
