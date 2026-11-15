@@ -25,3 +25,9 @@ export const getApplyJobDataCount = async (query="") =>{
   const res = await fetch(url);
   return res.json();
 }
+
+// user related apis
+export const getIsPremium = async (userId:string)=>{
+  const res = await fetch(`${BASE_URL}/users/${userId}`)
+  return res.json();
+}
