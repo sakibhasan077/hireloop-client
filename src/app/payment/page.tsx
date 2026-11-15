@@ -5,10 +5,17 @@ import PaymentCheckout from "./_components/PaymentCheckout";
 
 export const metadata: Metadata = {
   title: "Payment — HireLoop",
-  description: "Complete your secure HireLoop Pro payment.",
+  description: "Complete your secure one-time HireLoop payment.",
 };
 
-const PaymentPage = () => {
+const PaymentPage = async ({searchParams}:{ searchParams: Promise<{ [key: string]: string | string[] | undefined }>}) => {
+  const { canceled } = await searchParams
+
+  if (canceled) {
+    console.log(
+      'Order canceled -- continue to shop around and check out when you\'re ready.'
+    )
+  }
   return (
     <main className="relative min-h-svh overflow-hidden bg-[#050505] px-4 pt-24 pb-16 font-manrope text-white">
       <div
@@ -27,7 +34,7 @@ const PaymentPage = () => {
             Complete your payment
           </h1>
           <p className="mt-2 text-sm text-neutral-400">
-            You&apos;re one step away from unlocking HireLoop Pro.
+            Complete your one-time payment to publish your job on HireLoop.
           </p>
         </header>
 
