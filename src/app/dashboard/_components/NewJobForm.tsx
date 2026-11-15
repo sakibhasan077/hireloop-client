@@ -126,8 +126,7 @@ const NewJobForm = () => {
     }
 
     // The collected data is a plain object — ready to send to an API.
-    initialForm.recruiterId = session?.user.id as string;
-    const jobData = { ...form, };
+    const jobData = { ...form, recruiterId: session?.user.id as string };
     const result = await createJobs(jobData);
     if (result.insertedId) {
       toast.success(`"${form.jobTitle}" has been published.`);

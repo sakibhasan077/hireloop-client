@@ -19,7 +19,13 @@ import { deleteJobs } from "@/lib/actions/jobs";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-export function DeleteJobDialog({ job }: { job: JobPost }) {
+export function DeleteJobDialog({
+  job,
+  trigger,
+}: {
+  job: JobPost;
+  trigger?: React.ReactElement;
+}) {
   const router = useRouter()
   const handleDeleteJobs = async () =>{
     const result = await deleteJobs(job._id)
@@ -31,12 +37,16 @@ export function DeleteJobDialog({ job }: { job: JobPost }) {
     <AlertDialog>
       <AlertDialogTrigger
         render={
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="text-muted-foreground hover:text-red-400"
-            aria-label={`Delete ${job.jobTitle}`}
-          > <Trash2 /> </Button>
+          trigger ?? (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground hover:text-red-400"
+              aria-label={`Delete ${job.jobTitle}`}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          )
         }
       />
       <AlertDialogContent size="sm">
