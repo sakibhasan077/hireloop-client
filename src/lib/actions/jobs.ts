@@ -48,6 +48,19 @@ export const applyToAJob = async (applicationData:IJobApplication) =>{
   return res.json();
 }
 
+// update status
+export const updateApplicationStatus = async (applicationId: string, data:{status: string}) => {
+  console.log({applicationId,data})
+  const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+};
+
 
 // payment related
 export const paymentCheckout = async (sessionId: string) =>{

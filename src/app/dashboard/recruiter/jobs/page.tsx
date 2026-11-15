@@ -188,20 +188,20 @@ function getCompensationParts(job: JobPost): {
 function JobActions({ job }: { job: JobPost }) {
   return (
     <div className="flex items-center justify-end gap-.5 whitespace-nowrap">
-      {/* 1. View public posting */}
+      {/* 1. View applications */}
       <Tooltip>
         <TooltipTrigger
           render={
             <Link
-              href={`/brows-jobs/${job._id}`}
+              href={`/dashboard/recruiter/applications/${job._id}`}
               className="flex size-7.5 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
-              aria-label={`View public listing for ${job.jobTitle}`}
+              aria-label={`View applications for ${job.jobTitle}`}
             >
               <FileText className="size-3.5" />
             </Link>
           }
         />
-        <TooltipContent>View public posting</TooltipContent>
+        <TooltipContent>View applications</TooltipContent>
       </Tooltip>
 
       {/* 2. View details */}
