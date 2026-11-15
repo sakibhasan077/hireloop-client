@@ -47,3 +47,16 @@ export const applyToAJob = async (applicationData:IJobApplication) =>{
   });
   return res.json();
 }
+
+
+// payment related
+export const paymentCheckout = async (sessionId: string) =>{
+  const res = await fetch(`${BASE_URL}/payment/checkout-verify`,{
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({sessionId})
+  })
+  return res.json();
+}

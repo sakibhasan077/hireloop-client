@@ -1,3 +1,4 @@
+import { paymentCheckout } from "@/lib/actions/jobs";
 import { stripe } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 
@@ -21,7 +22,8 @@ export default async function checkOutSuccessPage({
   }
 
   if (status === "complete" && payment_status === "paid") {
-    console.log({status,customer_email,metadata,payment_intent,payment_status});
+    // console.log({status,customer_email,metadata,payment_intent,payment_status});
+    const result = await paymentCheckout(sessionId)
     return (
       <section id="success" className="mt-20">
         <p>
