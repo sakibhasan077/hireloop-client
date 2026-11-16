@@ -50,7 +50,6 @@ export const applyToAJob = async (applicationData:IJobApplication) =>{
 
 // update status
 export const updateApplicationStatus = async (applicationId: string, data:{status: string}) => {
-  console.log({applicationId,data})
   const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
     method: "PATCH",
     headers: {
