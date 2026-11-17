@@ -1,3 +1,4 @@
+"use server"
 // ============================================================
 // job.ts — SERVER ONLY
 // Only import this in Server Components, Server Actions, or
@@ -8,12 +9,13 @@ import { auth } from "../auth";
 import { authFetch } from "../core/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
+// Public route 
 export const getJobs = async (query = "") => {
   const res = await fetch(`${BASE_URL}/jobs?${query}`);
   return res.json();
 };
 
+//Public route
 export const getSpecificJobData = async (jobId: string) => {
   const res = await fetch(`${BASE_URL}/jobs/${jobId}`);
   return res.json();

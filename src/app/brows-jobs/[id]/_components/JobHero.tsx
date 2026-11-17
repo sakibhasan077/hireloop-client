@@ -11,7 +11,8 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { applyToAJob } from "@/lib/actions/jobs";
-import { getApplyJobDataClient, getApplyJobDataCountClient, getIsPremiumClient } from "@/lib/api/job-client";
+import { getApplyJobDataCountClient, getIsPremiumClient } from "@/lib/api/job-client";
+import { getApplyJobData } from "@/lib/api/job";
 
 export interface IJobApplication {
   jobId: string;
@@ -72,8 +73,9 @@ export function JobHero({ job }: { job: JobPost }) {
         status: job.status,
         archived: false,
       };
-      const userJobData:IJobApplicationResponse[] = await getApplyJobDataClient(`userId=${user.id}`)
-      const isFindUserId = userJobData.find(item => item.jobId === application.jobId)
+      const userJobData:IJobApplicationResponse[] = await getApplyJobData(`userId=${user.id}`)
+      const applicationsList:IJobApplicationResponse[] = Array.isArray(userJobData) ? userJobData: []; 
+      const isFindUserId = applicationsList.find(item => item.jobId === application.jobId)
       if(isFindUserId){
         toast.error("You have already applied for this job");
         return;

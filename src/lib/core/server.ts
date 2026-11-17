@@ -18,6 +18,7 @@ export const getToken = async () =>{
     return session?.session.token;
 }
 
+// get data 
 export const authFetch = async (api:string) => {
     const token = await getToken()
     const res = await fetch(api,{
@@ -28,6 +29,19 @@ export const authFetch = async (api:string) => {
     return res 
 }
 
+export const protectedMutation = async (api:string,method:string, data?:unknown) =>{
+    const token = await getToken();
+    console.log("token:",token)
+    const res= await fetch(api,{
+        method: method,
+        headers:{
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`
+        },
+        body: data? JSON.stringify(data) : null,
+    })
+    return res; 
+}
 
 export const requireRole = async (role: string) => {
     const session = await getServerSession();

@@ -1,16 +1,13 @@
+"use server"
 import { IJobApplication } from "@/app/brows-jobs/[id]/_components/JobHero";
 import { JobForm } from "@/app/dashboard/_components/NewJobForm";
+import { protectedMutation } from "../core/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 // post
 export const createJobs = async (data:JobForm) => {
-  const res = await fetch(`${BASE_URL}/jobs`,{
-    method: "POST",
-    headers:{
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  });
+  const api = `${BASE_URL}/jobs` ;
+  const res = await protectedMutation(api,"POST",data)
   return res.json();
 }
 
@@ -38,13 +35,8 @@ export const deleteJobs = async (jobId:string) =>{
 
 // post
 export const applyToAJob = async (applicationData:IJobApplication) =>{
-  const res = await fetch(`${BASE_URL}/applications`,{
-    method: "POST",
-    headers:{
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(applicationData)
-  });
+  const api = `${BASE_URL}/applications`;
+  const res = await protectedMutation(api,"POST",applicationData)
   return res.json();
 }
 

@@ -130,6 +130,8 @@ const NewJobForm = () => {
     const result = await createJobs(jobData);
     if (result.insertedId) {
       toast.success(`"${form.jobTitle}" has been published.`);
+    }else{
+      toast.error("Failed to published Job")
     }
     setForm(initialForm);
   };
