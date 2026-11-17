@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   Home,
 } from "lucide-react";
+import BackButton from "./_conponents/BackButton";
 
 export default function UnauthorizedPage() {
   return (
@@ -58,13 +59,7 @@ export default function UnauthorizedPage() {
             Back to Home
           </Link>
 
-          <Link
-            href="/login"
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium transition-colors"
-          >
-            <ArrowLeft size={18} />
-            Go to Login
-          </Link>
+          <BackButton></BackButton>
 
         </div>
       </div>
