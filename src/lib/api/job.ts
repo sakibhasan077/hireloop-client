@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { auth } from "../auth";
+import { authFetch } from "../core/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -18,7 +19,7 @@ export const getSpecificJobData = async (jobId: string) => {
 // get
 export const getApplyJobData = async (query = "") => {
   const url = `${BASE_URL}/applications?${query}`;
-  const res = await fetch(url);
+  const res = await authFetch(url);
   return res.json();
 };
 // count application
