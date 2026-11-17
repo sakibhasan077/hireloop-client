@@ -11,7 +11,7 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { applyToAJob } from "@/lib/actions/jobs";
-import { getApplyJobData, getApplyJobDataCount, getIsPremium } from "@/lib/api/job";
+import { getApplyJobDataClient, getApplyJobDataCountClient, getIsPremiumClient } from "@/lib/api/job-client";
 
 export interface IJobApplication {
   jobId: string;
@@ -45,10 +45,10 @@ export function JobHero({ job }: { job: JobPost }) {
       return;
     } else if (user.role === "seeker") {
       // is user premium
-      const premium = await getIsPremium(user.id);
+      const premium = await getIsPremiumClient(user.id);
       // console.log(premium);
       // show how much application this user
-      const countResult = await getApplyJobDataCount(`userId=${user.id}`)
+      const countResult = await getApplyJobDataCountClient(`userId=${user.id}`)
       if(!premium.premium && countResult.count >= 5){
         toast.error("You have reached the maximum number of applications allowed. Please upgrade to a premium plan to apply for more jobs.");
         router.push("/payment")
@@ -72,7 +72,7 @@ export function JobHero({ job }: { job: JobPost }) {
         status: job.status,
         archived: false,
       };
-      const userJobData:IJobApplicationResponse[] = await getApplyJobData(`userId=${user.id}`)
+      const userJobData:IJobApplicationResponse[] = await getApplyJobDataClient(`userId=${user.id}`)
       const isFindUserId = userJobData.find(item => item.jobId === application.jobId)
       if(isFindUserId){
         toast.error("You have already applied for this job");

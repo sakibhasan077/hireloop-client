@@ -1,3 +1,8 @@
+// ============================================================
+// job.ts — SERVER ONLY
+// Only import this in Server Components, Server Actions, or
+// Route Handlers. Never import in "use client" files.
+// ============================================================
 import { headers } from "next/headers";
 import { auth } from "../auth";
 import { authFetch } from "../core/server";
@@ -9,34 +14,31 @@ export const getJobs = async (query = "") => {
   return res.json();
 };
 
-// get specific data
 export const getSpecificJobData = async (jobId: string) => {
   const res = await fetch(`${BASE_URL}/jobs/${jobId}`);
   return res.json();
 };
 
-// application api
-// get
+// Uses authFetch (server-only) to send authorized requests
 export const getApplyJobData = async (query = "") => {
   const url = `${BASE_URL}/applications?${query}`;
   const res = await authFetch(url);
   return res.json();
 };
-// count application
+
 export const getApplyJobDataCount = async (query = "") => {
   const url = `${BASE_URL}/applications/count?${query}`;
   const res = await fetch(url);
   return res.json();
 };
 
-// user related apis
+// Uses next/headers — server only
 export const getUsers = async () => {
   const users = await auth.api.listUsers({
     query: {
-      sortBy: "name", // The field to sort by.
-      sortDirection: "desc", // The direction to sort by.
+      sortBy: "name",
+      sortDirection: "desc",
     },
-    // This endpoint requires session cookies.
     headers: await headers(),
   });
   return users;
