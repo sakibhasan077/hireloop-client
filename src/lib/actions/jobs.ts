@@ -67,12 +67,7 @@ export const paymentCheckout = async (sessionId: string) =>{
 
 // User related apis
 export const updateUserRoleByAdmin = async (id:string, role:string) =>{
-  const res = await fetch(`${BASE_URL}/users/${id}/role`,{
-    method: "PATCH",
-    headers:{
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({role})  
-  })
+  const api = `${BASE_URL}/users/${id}/role`;
+  const res = await protectedMutation(api,"PATCH",{role})
   return res.json();
 }
