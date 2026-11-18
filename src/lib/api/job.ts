@@ -9,7 +9,7 @@ import { auth } from "../auth";
 import { authFetch } from "../core/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-// Public route 
+// Public route
 export const getJobs = async (query = "") => {
   const res = await fetch(`${BASE_URL}/jobs?${query}`);
   return res.json();
@@ -36,14 +36,9 @@ export const getApplyJobDataCount = async (query = "") => {
 
 // Uses next/headers — server only
 export const getUsers = async () => {
-  const users = await auth.api.listUsers({
-    query: {
-      sortBy: "name",
-      sortDirection: "desc",
-    },
-    headers: await headers(),
-  });
-  return users;
+  const api = `${BASE_URL}/users`
+  const res = await authFetch(api)
+  return res.json();
 };
 
 export const getIsPremium = async (userId: string) => {

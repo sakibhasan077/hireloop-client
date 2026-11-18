@@ -224,7 +224,7 @@ const SignUpForm = () => {
         name: values.name.trim(),
         email: values.email.trim(),
         password: values.password,
-        // role,
+        role,
         image: imageUrl ?? undefined,
       },
       {

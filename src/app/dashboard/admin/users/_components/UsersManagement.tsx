@@ -8,12 +8,11 @@ import {
   HelpCircle,
   Search,
 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
 import { updateUserRoleByAdmin } from "@/lib/actions/jobs";
 
 // Shape of a user object from Better-Auth
 export interface UserItem {
-  id: string;
+  _id: string;
   name?: string;
   email: string;
   role?: string;
@@ -53,7 +52,7 @@ export function UsersManagement({ initialUsers }: UsersManagementProps) {
   const handleRoleChange = async (userId: string, newRole: string) => {
     // 1. Update UI state immediately
     setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+      prev.map((u) => (u._id === userId ? { ...u, role: newRole } : u))
     );
 
     const result = await updateUserRoleByAdmin(userId,newRole);
@@ -62,16 +61,6 @@ export function UsersManagement({ initialUsers }: UsersManagementProps) {
     }else{
       toast.error("Failed to update role");
     }
-    // 2. Persist with Better-Auth Admin API
-    // try {
-    //   await (authClient.admin as any).setRole({
-    //     userId,
-    //     role: newRole , 
-    //   });
-    //   toast.success(`Role updated to ${capitalize(newRole)}`);
-    // } catch {
-    //   toast.success(`Role updated to ${capitalize(newRole)}`);
-    // }
   };
 
   // Filter users based on search input and role filter
@@ -223,7 +212,7 @@ export function UsersManagement({ initialUsers }: UsersManagementProps) {
         ) : (
           <div className="w-full overflow-x-auto lg:overflow-x-visible">
             <table className="w-full text-left border-collapse">
-              <thead className="border-b border-white/5 bg-white/[0.02]">
+              <thead className="border-b border-white/5 bg-white/2">
                 <tr>
                   <th className="py-3.5 pl-6 pr-4 text-[11px] font-semibold tracking-wider text-zinc-400 uppercase">
                     User Name
@@ -256,8 +245,8 @@ export function UsersManagement({ initialUsers }: UsersManagementProps) {
 
                   return (
                     <tr
-                      key={user.id}
-                      className="transition-colors hover:bg-white/[0.02]"
+                      key={user._id}
+                      className="transition-colors hover:bg-white/2"
                     >
                       {/* 1. User Name with initial avatar */}
                       <td className="py-4 pl-6 pr-4 align-middle">
@@ -302,7 +291,7 @@ export function UsersManagement({ initialUsers }: UsersManagementProps) {
                           <select
                             value={user.role || "seeker"}
                             onChange={(e) =>
-                              handleRoleChange(user.id, e.target.value)
+                              handleRoleChange(user._id, e.target.value)
                             }
                             className="appearance-none cursor-pointer rounded-lg border border-white/10 bg-[#16171d] px-3 py-1.5 pr-8 text-xs font-medium text-zinc-200 outline-none transition-colors hover:bg-white/5"
                           >

@@ -163,7 +163,7 @@ export function DashboardSidebar() {
   const role: Role = isRole(session?.user.role) ? session.user.role : "seeker";
   const menuItems = menuItemByRole[role];
   const user = session?.user;
-  const avatarSrc = user?.imageUrl || "/images/avatar-placeholder.svg";
+  const avatarSrc = user?.image || "/images/avatar-placeholder.svg";
 
   // Pick the most specific menu item that matches the current route.
   const activeUrl = menuItems
