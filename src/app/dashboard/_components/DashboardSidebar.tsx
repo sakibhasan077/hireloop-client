@@ -18,6 +18,7 @@ import {
   CirclePlus,
   CreditCard,
   FileText,
+  House,
   LayoutDashboard,
   Settings,
   Users,
@@ -147,6 +148,12 @@ const menuItemByRole: Record<Role, MenuItem[]> = {
   ],
 };
 
+const roleLabels: Record<Role, string> = {
+  seeker: "Job Seeker",
+  recruiter: "Recruiter",
+  admin: "Admin",
+};
+
 const isRole = (value: string | null | undefined): value is Role =>
   value === "seeker" || value === "recruiter" || value === "admin";
 
@@ -155,6 +162,8 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const role: Role = isRole(session?.user.role) ? session.user.role : "seeker";
   const menuItems = menuItemByRole[role];
+  const user = session?.user;
+  const avatarSrc = user?.imageUrl || "/images/avatar-placeholder.svg";
 
   // Pick the most specific menu item that matches the current route.
   const activeUrl = menuItems
@@ -166,7 +175,42 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader />
+      <SidebarHeader>
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-sidebar-accent"
+          aria-label="Go to the HireLoop home page"
+        >
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#5C53FE] text-white">
+            <House className="size-4" />
+          </span>
+          <span className="flex min-w-0 flex-col">
+            <span className="truncate text-sm font-semibold text-sidebar-foreground">
+              HireLoop
+            </span>
+            <span className="truncate text-xs text-muted-foreground">
+              Back to home
+            </span>
+          </span>
+        </Link>
+
+        <div className="flex items-center gap-2.5 rounded-md px-2 py-1.5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={avatarSrc}
+            alt=""
+            className="size-9 shrink-0 rounded-full border border-sidebar-border object-cover"
+          />
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-sm font-medium text-sidebar-foreground">
+              {user?.name ?? "Guest"}
+            </span>
+            <span className="truncate text-xs text-muted-foreground">
+              {roleLabels[role]}
+            </span>
+          </div>
+        </div>
+      </SidebarHeader>
       <SidebarContent className="font-inter">
         <SidebarGroup />
         <SidebarGroup />

@@ -83,12 +83,20 @@ const Navbar = () => {
           </nav>
           {/* log-in and sign up buttons */}
           {user ? (
-            <button
-              onClick={handleSignout}
-              className="inline-block min-h-7 bg-red-600 px-5.5 py-3 text-[10px] text-white hover:bg-red-600/90 lg:px-3 lg:text-xs rounded-md"
-            >
-              Sign out
-            </button>
+            <div className="flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={user.image || "/images/avatar-placeholder.svg"}
+                alt={`${user.name || "User"} profile photo`}
+                className="size-8 shrink-0 rounded-full border border-white/10 object-cover"
+              />
+              <button
+                onClick={handleSignout}
+                className="inline-block min-h-7 bg-red-600 px-5.5 py-3 text-[10px] text-white hover:bg-red-600/90 lg:px-3 lg:text-xs rounded-md"
+              >
+                Sign out
+              </button>
+            </div>
           ) : (
             <div className="flex items-center gap-2 lg:gap-4">
               <Link
@@ -156,12 +164,20 @@ const Navbar = () => {
                 </nav>
                 {/* Login and sign up buttons */}
                 {user ? (
-                  <button
-                    onClick={handleSignout}
-                    className="inline-block min-h-7 bg-red-600 px-5.5 py-3 text-[10px] text-white hover:bg-red-600/90 lg:px-3 lg:text-xs rounded-md"
-                  >
-                    Sign out
-                  </button>
+                  <div className="mt-3 flex items-center gap-3 border-t border-white/10 pt-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={user.image || "/images/avatar-placeholder.svg"}
+                      alt={`${user.name || "User"} profile photo`}
+                      className="size-9 shrink-0 rounded-full border border-white/10 object-cover"
+                    />
+                    <button
+                      onClick={handleSignout}
+                      className="inline-block min-h-7 bg-red-600 px-5.5 py-3 text-[10px] text-white hover:bg-red-600/90 lg:px-3 lg:text-xs rounded-md"
+                    >
+                      Sign out
+                    </button>
+                  </div>
                 ) : (
                   <div className="mt-3 flex flex-col gap-4 border-t border-white/10 pt-3">
                     <Link

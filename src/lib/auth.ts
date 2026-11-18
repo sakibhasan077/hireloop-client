@@ -21,6 +21,11 @@ export const auth = betterAuth({
         defaultValue: "seeker",
         input: true,
       },
+      imageUrl: {
+        type: "string",
+        required: false,
+        input: true,
+      },
     },
   },
   plugins: [admin()],

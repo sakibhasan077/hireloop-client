@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Eye, EyeOff, ImagePlus, Lock, Mail, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signUp } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 type FieldName = "name" | "email" | "password" | "confirmPassword" | "role";
 type FormValues = Record<FieldName, string>;
@@ -16,7 +17,6 @@ type FormErrors = Partial<Record<FieldName, string>>;
 const roles = [
   { value: "seeker", label: "Job Seeker" },
   { value: "recruiter", label: "Recruiter" },
-  { value: "admin", label: "Admin" },
 ] as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -46,8 +46,7 @@ const validatePassword = (value: string) => {
     return "Password must contain at least one uppercase letter.";
   if (!/[a-z]/.test(value))
     return "Password must contain at least one lowercase letter.";
-  if (!/[0-9]/.test(value))
-    return "Password must contain at least one number.";
+  if (!/[0-9]/.test(value)) return "Password must contain at least one number.";
   if (!/[!@#$%^&*]/.test(value))
     return "Password must contain at least one special character.";
 
@@ -94,7 +93,7 @@ const validateField = (name: FieldName, values: FormValues) => {
 };
 
 const SignUpForm = () => {
-  const router = useRouter()
+  const router = useRouter();
   const [values, setValues] = useState<FormValues>({
     name: "",
     email: "",
@@ -105,6 +104,63 @@ const SignUpForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const imagePreviewUrlRef = useRef<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(
+    () => () => {
+      if (imagePreviewUrlRef.current) {
+        URL.revokeObjectURL(imagePreviewUrlRef.current);
+      }
+    },
+    [],
+  );
+
+  /**
+   * Keeps the selected image locally so it can be previewed.
+   * TODO: upload `imageFile` to storage, then persist the returned URL
+   * (e.g. `imageUrl`) on the user record.
+   */
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0] ?? null;
+
+    if (!file) {
+      if (imagePreviewUrlRef.current) {
+        URL.revokeObjectURL(imagePreviewUrlRef.current);
+        imagePreviewUrlRef.current = null;
+      }
+      setImageFile(null);
+      setImagePreviewUrl(null);
+      return;
+    }
+
+    if (imagePreviewUrlRef.current) {
+      URL.revokeObjectURL(imagePreviewUrlRef.current);
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+    const imageBB = `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGEBB_API_KEY}`;
+
+    const res = await fetch(imageBB, {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+    const imageUrl = result.data.url;
+
+    setImageUrl(imageUrl)
+
+    const previewUrl = URL.createObjectURL(file);
+    imagePreviewUrlRef.current = previewUrl;
+    setImageFile(file);
+    setImagePreviewUrl(previewUrl);
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -161,12 +217,15 @@ const SignUpForm = () => {
 
     if (Object.values(nextErrors).some(Boolean)) return;
 
+    const role = values.role === "recruiter" ? "recruiter" : "seeker";
+
     await signUp.email(
       {
         name: values.name.trim(),
         email: values.email.trim(),
         password: values.password,
-        role: values.role,
+        // role,
+        image: imageUrl ?? undefined,
       },
       {
         onRequest: () => {
@@ -220,11 +279,49 @@ const SignUpForm = () => {
         )}
       </div>
 
+      <div className="flex flex-col gap-2">
+        <label htmlFor="image" className="text-sm font-medium text-neutral-200">
+          Profile photo
+        </label>
+        <div className="flex items-center gap-3">
+          <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
+            {imagePreviewUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <Image
+                src={imagePreviewUrl}
+                alt="Selected profile photo preview"
+                width={150}
+                height={150}
+                className="size-full object-cover"
+              />
+            ) : (
+              <ImagePlus
+                aria-hidden="true"
+                className="size-5 text-neutral-500"
+              />
+            )}
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <Input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className={`${inputClassName} cursor-pointer file:mr-2 file:rounded-md file:border-0 file:bg-white/10 file:px-2.5 file:py-1 file:text-xs file:font-medium file:text-neutral-200 hover:file:bg-white/15`}
+            />
+            <p className="truncate text-xs text-neutral-500">
+              {imageFile ? imageFile.name : "PNG or JPG, up to 5 MB."}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <fieldset className="flex flex-col gap-2">
         <legend className="text-sm font-medium text-neutral-200">
-          Joining HireLoop as 
+          Joining HireLoop as
         </legend>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {roles.map((role) => (
             <label
               key={role.value}
